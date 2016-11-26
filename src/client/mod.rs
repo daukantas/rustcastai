@@ -60,10 +60,14 @@ impl<'a> Client<'a> {
             .and_then(|x| Self::parse_response::<Response>(x))
     }
 
-    pub fn text_converse(&self, text: &str) -> Result<Conversation, RecastError> {
+    pub fn text_converse(&self, text: &str, conversation_token: Option<&str>) -> Result<Conversation, RecastError> {
         let mut req = Request::new(Method::Post, constants::CONVERSE_ENDPOINT);
+        let mut params = vec![("text", text)];
+        if let Some(token) = conversation_token {
+            params.push(("conversation_token", token));
+        }
         req.header(Authorization(format!("Token {}", self.token)));
-        req.params(vec![("text", text)]);
+        req.params(params);
 
         req.send()
             .map_err(|e| RecastError::Request(e))
