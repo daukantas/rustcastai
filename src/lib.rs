@@ -12,4 +12,22 @@ pub mod intent;
 pub mod error;
 pub mod constants {
     pub const REQUEST_ENDPOINT: &'static str = "https://api.recast.ai/v2/request";
+
+    pub const ACT_ASSERT: &'static str = "assert";
+    pub const ACT_COMMAND: &'static str = "command";
+    pub const ACT_WH_QUERY: &'static str = "wh-query";
+    pub const ACT_YN_QUERY: &'static str = "yn-query";
+
+    pub const TYPE_ABBREVIATION: &'static str = "abbr:";
+    pub const TYPE_ENTITY: &'static str = "enty:";
+    pub const TYPE_DESCRIPTION: &'static str = "desc:";
+    pub const TYPE_HUMAN: &'static str = "hum:";
+    pub const TYPE_LOCATION: &'static str = "loc:";
+    pub const TYPE_NUMBER: &'static str = "num:";
+
+    pub const SENTIMENT_VPOSITIVE: &'static str = "vpositive";
+    pub const SENTIMENT_POSITIVE: &'static str = "positive";
+    pub const SENTIMENT_NEUTRAL: &'static str = "neutral";
+    pub const SENTIMENT_NEGATIVE: &'static str = "negative";
+    pub const SENTIMENT_VNEGATIVE: &'static str = "vnegative";
 }

@@ -22,3 +22,18 @@ pub struct Response {
     intents: Vec<Intent>,
     entities: HashMap<String, Vec<Map<String, Value>>>,
 }
+
+impl Response {
+
+    pub fn intent(&self) -> Option<&Intent> {
+        self.intents.first()
+    }
+
+    pub fn all(&self, name: &str) -> Option<&Vec<Map<String, Value>>> {
+        self.entities.get(name)
+    }
+
+    pub fn get(&self, name: &str) -> Option<&Map<String, Value>> {
+        self.entities.get(name).and_then(|e| e.first())
+    }
+}

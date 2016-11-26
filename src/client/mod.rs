@@ -1,5 +1,5 @@
-use std::io::Read;
 use std::env;
+use std::io::Read;
 
 use serde_json;
 use serde::de::Deserialize;
