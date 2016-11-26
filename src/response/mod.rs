@@ -10,18 +10,18 @@ use super::constants;
  */
 #[derive(Debug, Deserialize)]
 pub struct Response {
-    uuid: String,
-    act: String,
-    source: String,
-    sentiment: String,
-    language: String,
-    version: String,
-    timestamp: String,
+    pub uuid: String,
+    pub act: String,
+    pub source: String,
+    pub sentiment: String,
+    pub language: String,
+    pub version: String,
+    pub timestamp: String,
     #[serde(rename="type")]
-    sentence_type: String,
-    status: i32,
-    intents: Vec<Intent>,
-    entities: HashMap<String, Vec<Map<String, Value>>>,
+    pub sentence_type: String,
+    pub status: i32,
+    pub intents: Vec<Intent>,
+    pub entities: HashMap<String, Vec<Map<String, Value>>>,
 }
 
 impl Response {
