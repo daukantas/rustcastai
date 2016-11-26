@@ -1,4 +1,5 @@
 use std::io::Read;
+use std::env;
 
 use serde_json;
 use serde::de::Deserialize;
@@ -32,10 +33,26 @@ impl<'a> Client<'a> {
         self.language = Some(language);
     }
 
-    pub fn text_request(&self, text: &str) -> Result<Response, RecastError>{
+    pub fn text_request(&self, text: &str) -> Result<Response, RecastError> {
         let mut req = Request::new(Method::Post, constants::REQUEST_ENDPOINT);
         req.header(Authorization(format!("Token {}", self.token)));
         req.params(vec![("text", text)]);
+
+        req.send()
+            .map_err(|e| RecastError::Request(e))
+            .and_then(|x| Self::parse_response::<Response>(x))
+    }
+
+    pub fn file_request(&self, file_name: &str) -> Result<Response, RecastError> {
+        let file = FileUpload {
+            path: &env::current_dir().unwrap().join(file_name),
+            name: "voice".to_string(),
+            mime: None,
+        };
+
+        let mut req = Request::new(Method::Post, constants::REQUEST_ENDPOINT);
+        req.header(Authorization(format!("Token {}", self.token)));
+        req.files(vec![file]);
 
         req.send()
             .map_err(|e| RecastError::Request(e))
