@@ -26,14 +26,17 @@ struct Body<T> {
 }
 
 impl<'a> Client<'a> {
+    /// Create a new client with a Recast.AI toke
     pub fn new(token: &'a str) -> Self {
         Client { token: token, language: None }
     }
 
+    /// Set the language used to perform text_request, file_request and text_converse
     pub fn set_language(&mut self, language: &'a str) {
         self.language = Some(language);
     }
 
+    /// Call Recast.AI's API to analyze a text
     pub fn text_request(&self, text: &str) -> Result<Response, RecastError> {
         let mut req = Request::new(Method::Post, constants::REQUEST_ENDPOINT);
         req.header(Authorization(format!("Token {}", self.token)));
@@ -44,6 +47,7 @@ impl<'a> Client<'a> {
             .and_then(|x| Self::parse_response::<Response>(x))
     }
 
+    /// Call Recast.AI's API to analyze an audio file
     pub fn file_request(&self, file_name: &str) -> Result<Response, RecastError> {
         let file = FileUpload {
             path: &env::current_dir().unwrap().join(file_name),
@@ -60,6 +64,7 @@ impl<'a> Client<'a> {
             .and_then(|x| Self::parse_response::<Response>(x))
     }
 
+    /// Call Recast.AI's API to interact with a bot
     pub fn text_converse(&self, text: &str, conversation_token: Option<&str>) -> Result<Conversation, RecastError> {
         let mut req = Request::new(Method::Post, constants::CONVERSE_ENDPOINT);
         let mut params = vec![("text", text)];
