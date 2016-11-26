@@ -7,6 +7,7 @@ extern crate serde_json;
 #[macro_use] extern crate serde_derive;
 
 pub mod client;
+pub mod action;
 pub mod response;
 pub mod intent;
 pub mod error;
