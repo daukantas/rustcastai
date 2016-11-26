@@ -20,3 +20,22 @@ pub struct Conversation {
     status: i32,
     version: String,
 }
+
+impl Conversation {
+
+    pub fn replies(&self) -> Option<&str> {
+        self.replies.first().map(|s| s.as_str())
+    }
+
+    pub fn next_actions(&self) -> Option<&Action> {
+        self.next_actions.first()
+    }
+
+    pub fn joined_replies(&self, sep: &str) -> String {
+        self.replies.join(sep)
+    }
+
+    pub fn get_memory(&self, key: &str) -> Option<&Map<String, Value>> {
+        self.memory.get(key)
+    }
+}
