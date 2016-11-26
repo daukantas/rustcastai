@@ -1,0 +1,10 @@
+[package]
+name = "rustcastai"
+version = "0.1.0"
+authors = ["jhoudan <jerom.houdan@gmail.com>"]
+
+[dependencies]
+curs = "*"
+serde = "0.8"
+serde_json = "0.8"
+serde_derive = "0.8.17"
