@@ -57,4 +57,32 @@ impl Response {
     pub fn is_yn_query(&self) -> bool {
         self.act.eq(constants::ACT_YN_QUERY)
     }
+
+    /*
+     * Type helper
+     */
+
+    pub fn is_abbreviation(&self) -> bool {
+        self.sentence_type.starts_with(constants::TYPE_ABBREVIATION)
+    }
+
+    pub fn is_entity(&self) -> bool {
+        self.sentence_type.starts_with(constants::TYPE_ENTITY)
+    }
+
+    pub fn is_description(&self) -> bool {
+        self.sentence_type.starts_with(constants::TYPE_DESCRIPTION)
+    }
+
+    pub fn is_human(&self) -> bool {
+        self.sentence_type.starts_with(constants::TYPE_HUMAN)
+    }
+
+    pub fn is_location(&self) -> bool {
+        self.sentence_type.starts_with(constants::TYPE_LOCATION)
+    }
+
+    pub fn is_number(&self) -> bool {
+        self.sentence_type.starts_with(constants::TYPE_NUMBER)
+    }
 }
