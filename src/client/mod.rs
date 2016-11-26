@@ -11,6 +11,7 @@ use curs::{Request, FileUpload, Method, StatusCode};
 use super::constants;
 use super::response::Response;
 use super::error::RecastError;
+use super::conversation::Conversation;
 
 #[derive(Debug)]
 pub struct Client<'a> {
@@ -59,7 +60,17 @@ impl<'a> Client<'a> {
             .and_then(|x| Self::parse_response::<Response>(x))
     }
 
-    fn parse_response<T: Deserialize>(mut res: curs::Response) -> Result<T, RecastError>{
+    pub fn text_converse(&self, text: &str) -> Result<Conversation, RecastError> {
+        let mut req = Request::new(Method::Post, constants::CONVERSE_ENDPOINT);
+        req.header(Authorization(format!("Token {}", self.token)));
+        req.params(vec![("text", text)]);
+
+        req.send()
+            .map_err(|e| RecastError::Request(e))
+            .and_then(|x| Self::parse_response::<Conversation>(x))
+    }
+
+    fn parse_response<T: Deserialize>(mut res: curs::Response) -> Result<T, RecastError> {
         if res.status != StatusCode::Ok {
             return Err(RecastError::Status(res.status))
         }
