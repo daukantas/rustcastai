@@ -1,5 +1,5 @@
 #[derive(Debug, Deserialize)]
 pub struct Intent {
-    slug: String,
-    confidence: f32,
+    pub slug: String,
+    pub confidence: f32,
 }

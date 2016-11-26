@@ -15,7 +15,7 @@ use super::conversation::Conversation;
 
 #[derive(Debug)]
 pub struct Client<'a> {
-    token: &'a str,
+    pub token: &'a str,
     language: Option<&'a str>,
 }
 

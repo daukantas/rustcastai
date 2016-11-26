@@ -1,24 +1,30 @@
 use serde_json::{Map, Value};
 use std::collections::HashMap;
 
+use curs;
+use curs::{Request, Method};
+use curs::hyper::header::Authorization;
+
+use super::constants;
 use super::intent::Intent;
 use super::action::Action;
+use super::error::RecastError;
 
 #[derive(Debug, Deserialize)]
 pub struct Conversation {
-    uuid: String,
-    source: String,
-    replies: Vec<String>,
-    action: Option<Action>,
-    next_actions: Vec<Action>,
-    memory: HashMap<String, Map<String, Value>>,
-    entities: HashMap<String, Vec<Map<String, Value>>>,
-    intents: Vec<Intent>,
-    conversation_token: String,
-    language: String,
-    timestamp: String,
-    status: i32,
-    version: String,
+    pub uuid: String,
+    pub source: String,
+    pub replies: Vec<String>,
+    pub action: Option<Action>,
+    pub next_actions: Vec<Action>,
+    pub memory: HashMap<String, Map<String, Value>>,
+    pub entities: HashMap<String, Vec<Map<String, Value>>>,
+    pub intents: Vec<Intent>,
+    pub conversation_token: String,
+    pub language: String,
+    pub timestamp: String,
+    pub status: i32,
+    pub version: String,
 }
 
 impl Conversation {
@@ -37,5 +43,13 @@ impl Conversation {
 
     pub fn get_memory(&self, key: &str) -> Option<&Map<String, Value>> {
         self.memory.get(key)
+    }
+
+    pub fn reset_memory(token: &str, conversation_token: &str) -> Result<curs::Response, RecastError> {
+        let mut req = Request::new(Method::Delete, constants::CONVERSE_ENDPOINT);
+        req.header(Authorization(format!("Token {}", token)));
+        req.params(vec![("conversation_token", conversation_token)]);
+
+        req.send().map_err(|e| RecastError::Request(e))
     }
 }
