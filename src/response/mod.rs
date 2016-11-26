@@ -85,4 +85,28 @@ impl Response {
     pub fn is_number(&self) -> bool {
         self.sentence_type.starts_with(constants::TYPE_NUMBER)
     }
+
+    /*
+     * Sentiment helper
+     */
+
+    pub fn is_vpositive(&self) -> bool {
+        self.sentiment.eq(constants::SENTIMENT_VPOSITIVE)
+    }
+
+    pub fn is_positive(&self) -> bool {
+        self.sentiment.eq(constants::SENTIMENT_POSITIVE)
+    }
+
+    pub fn is_neutral(&self) -> bool {
+        self.sentiment.eq(constants::SENTIMENT_NEUTRAL)
+    }
+
+    pub fn is_negative(&self) -> bool {
+        self.sentiment.eq(constants::SENTIMENT_NEGATIVE)
+    }
+
+    pub fn is_vnegative(&self) -> bool {
+        self.sentiment.eq(constants::SENTIMENT_VNEGATIVE)
+    }
 }
