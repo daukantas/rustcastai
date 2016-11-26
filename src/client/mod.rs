@@ -1,7 +1,15 @@
-use curs;
 use std::io::Read;
+use std::fmt::Debug;
+
+use serde_json;
+use serde::de::Deserialize;
+
+use curs;
 use curs::hyper::header::Authorization;
 use curs::{Request, FileUpload, Method, StatusCode};
+
+use super::constants;
+use super::response::Response;
 
 #[derive(Debug)]
 pub struct Client<'a> {
@@ -9,9 +17,10 @@ pub struct Client<'a> {
     language: Option<&'a str>,
 }
 
-struct Body<'a, T> {
+#[derive(Debug, Deserialize)]
+struct Body<T> {
     results: T,
-    message: &'a str,
+    message: String,
 }
 
 impl<'a> Client<'a> {
@@ -23,15 +32,18 @@ impl<'a> Client<'a> {
         self.language = Some(language);
     }
 
-    pub fn text_converse(&self, text: &str) {
-        let mut req = Request::new(Method::Post, "https://api.recast.ai");
+    pub fn text_request(&self, text: &str) {
+        let mut req = Request::new(Method::Post, constants::REQUEST_ENDPOINT);
         req.header(Authorization(format!("Token {}", self.token)));
         req.params(vec![("text", text)]);
 
-        req.send().and_then(|x| Ok(57));
+        req.send().and_then(|x| {
+            Self::parse_response::<Response>(x);
+            Ok(52)
+        });
     }
 
-    fn parse_response(mut res: curs::Response) {
+    fn parse_response<T: Deserialize + Debug>(mut res: curs::Response) {
         if res.status != StatusCode::Ok {
             // return Err(RecastError::Status(res.status))
         }
@@ -39,5 +51,8 @@ impl<'a> Client<'a> {
         let mut body = String::new();
         res.read_to_string(&mut body).unwrap();
         println!("{}", body);
+
+        let body: Result<Body<T>, _> = serde_json::from_str(&body);
+        println!("DESERIALIZED {:?}", body);
     }
 }

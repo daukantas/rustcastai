@@ -1,6 +1,4 @@
 use std::collections::HashMap;
-
-use serde_derive;
 use serde_json::{Map, Value};
 
 use super::intent::Intent;
@@ -9,7 +7,7 @@ use super::intent::Intent;
  * As serde does not support deserialization for &str
  * we use String instead
  */
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct Response {
     uuid: String,
     act: String,
