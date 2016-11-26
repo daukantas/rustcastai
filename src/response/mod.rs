@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use serde_json::{Map, Value};
 
 use super::intent::Intent;
+use super::constants;
 
 /*
  * As serde does not support deserialization for &str
@@ -35,5 +36,25 @@ impl Response {
 
     pub fn get(&self, name: &str) -> Option<&Map<String, Value>> {
         self.entities.get(name).and_then(|e| e.first())
+    }
+
+    /*
+     * Act helper
+     */
+
+    pub fn is_assert(&self) -> bool {
+        self.act.eq(constants::ACT_ASSERT)
+    }
+
+    pub fn is_command(&self) -> bool {
+        self.act.eq(constants::ACT_COMMAND)
+    }
+
+    pub fn is_wh_query(&self) -> bool {
+        self.act.eq(constants::ACT_WH_QUERY)
+    }
+
+    pub fn is_yn_query(&self) -> bool {
+        self.act.eq(constants::ACT_YN_QUERY)
     }
 }
