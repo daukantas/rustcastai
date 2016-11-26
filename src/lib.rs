@@ -9,6 +9,7 @@ extern crate serde_json;
 pub mod client;
 pub mod response;
 pub mod intent;
+pub mod error;
 pub mod constants {
     pub const REQUEST_ENDPOINT: &'static str = "https://api.recast.ai/v2/request";
 }

@@ -1,5 +1,4 @@
 use std::io::Read;
-use std::fmt::Debug;
 
 use serde_json;
 use serde::de::Deserialize;
@@ -10,6 +9,7 @@ use curs::{Request, FileUpload, Method, StatusCode};
 
 use super::constants;
 use super::response::Response;
+use super::error::RecastError;
 
 #[derive(Debug)]
 pub struct Client<'a> {
@@ -32,27 +32,26 @@ impl<'a> Client<'a> {
         self.language = Some(language);
     }
 
-    pub fn text_request(&self, text: &str) {
+    pub fn text_request(&self, text: &str) -> Result<Response, RecastError>{
         let mut req = Request::new(Method::Post, constants::REQUEST_ENDPOINT);
         req.header(Authorization(format!("Token {}", self.token)));
         req.params(vec![("text", text)]);
 
-        req.send().and_then(|x| {
-            Self::parse_response::<Response>(x);
-            Ok(52)
-        });
+        req.send()
+            .map_err(|e| RecastError::Request(e))
+            .and_then(|x| Self::parse_response::<Response>(x))
     }
 
-    fn parse_response<T: Deserialize + Debug>(mut res: curs::Response) {
+    fn parse_response<T: Deserialize>(mut res: curs::Response) -> Result<T, RecastError>{
         if res.status != StatusCode::Ok {
-            // return Err(RecastError::Status(res.status))
+            return Err(RecastError::Status(res.status))
         }
 
         let mut body = String::new();
-        res.read_to_string(&mut body).unwrap();
-        println!("{}", body);
+        res.read_to_string(&mut body).map_err(|e| RecastError::IOError(e))?;
 
-        let body: Result<Body<T>, _> = serde_json::from_str(&body);
-        println!("DESERIALIZED {:?}", body);
+        serde_json::from_str::<Body<T>>(&body)
+            .and_then(|b| Ok(b.results))
+            .map_err(|e| RecastError::Parse(e))
     }
 }
