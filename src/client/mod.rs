@@ -1,7 +1,6 @@
 use std::env;
 use std::io::Read;
 
-use serde_json;
 use serde::de::Deserialize;
 
 use curs;
@@ -12,6 +11,7 @@ use super::constants;
 use super::response::Response;
 use super::error::RecastError;
 use super::conversation::Conversation;
+use super::traits::ParseResponse;
 
 #[derive(Debug)]
 pub struct Client<'a> {
@@ -19,11 +19,7 @@ pub struct Client<'a> {
     language: Option<&'a str>,
 }
 
-#[derive(Debug, Deserialize)]
-struct Body<T> {
-    results: T,
-    message: String,
-}
+impl<'a> ParseResponse for Client<'a> {}
 
 impl<'a> Client<'a> {
     /// Create a new client with a Recast.AI toke
@@ -39,9 +35,13 @@ impl<'a> Client<'a> {
     /// Call Recast.AI's API to analyze a text
     pub fn text_request(&self, text: &str) -> Result<Response, RecastError> {
         let mut req = Request::new(Method::Post, constants::REQUEST_ENDPOINT);
-        req.header(Authorization(format!("Token {}", self.token)));
-        req.params(vec![("text", text)]);
+        let mut params = vec![("text", text)];
+        if let Some(ref language) = self.language {
+            params.push(("language", language));
+        }
 
+        req.header(Authorization(format!("Token {}", self.token)));
+        req.params(params);
         req.send()
             .map_err(|e| RecastError::Request(e))
             .and_then(|x| Self::parse_response::<Response>(x))
@@ -54,11 +54,10 @@ impl<'a> Client<'a> {
             name: "voice".to_string(),
             mime: None,
         };
-
         let mut req = Request::new(Method::Post, constants::REQUEST_ENDPOINT);
+
         req.header(Authorization(format!("Token {}", self.token)));
         req.files(vec![file]);
-
         req.send()
             .map_err(|e| RecastError::Request(e))
             .and_then(|x| Self::parse_response::<Response>(x))
@@ -71,24 +70,14 @@ impl<'a> Client<'a> {
         if let Some(token) = conversation_token {
             params.push(("conversation_token", token));
         }
+        if let Some(ref language) = self.language {
+            params.push(("language", language));
+        }
+
         req.header(Authorization(format!("Token {}", self.token)));
         req.params(params);
-
         req.send()
             .map_err(|e| RecastError::Request(e))
             .and_then(|x| Self::parse_response::<Conversation>(x))
-    }
-
-    fn parse_response<T: Deserialize>(mut res: curs::Response) -> Result<T, RecastError> {
-        if res.status != StatusCode::Ok {
-            return Err(RecastError::Status(res.status))
-        }
-
-        let mut body = String::new();
-        res.read_to_string(&mut body).map_err(|e| RecastError::IOError(e))?;
-
-        serde_json::from_str::<Body<T>>(&body)
-            .and_then(|b| Ok(b.results))
-            .map_err(|e| RecastError::Parse(e))
     }
 }
