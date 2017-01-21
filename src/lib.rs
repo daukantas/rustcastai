@@ -1,4 +1,3 @@
-#![feature(proc_macro)]
 #![feature(custom_attribute)]
 
 //! Wrapper around the Recast.AI API
@@ -15,6 +14,7 @@ extern crate serde_json;
 
 /// Rustcastai Client to perform requests to the Recast.AI API
 pub mod client;
+pub use client::Client;
 /// Representation of a Recast.AI action
 pub mod action;
 /// Result of a request to analyze datas
