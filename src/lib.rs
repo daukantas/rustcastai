@@ -8,6 +8,7 @@
 //! It allows you to build bots and analyze text and audio files
 
 extern crate curs;
+extern crate reqwest;
 extern crate serde;
 extern crate serde_json;
 #[macro_use] extern crate serde_derive;

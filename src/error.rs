@@ -1,11 +1,12 @@
-use curs;
+use reqwest;
 use std::io;
 use serde_json;
 
 #[derive(Debug)]
 pub enum RecastError {
-    Request(curs::CursError),
-    Parse(serde_json::Error),
-    Status(curs::StatusCode),
+    FileError,
     IOError(io::Error),
+    Parse(serde_json::Error),
+    RequestError(reqwest::Response),
+    HTTPClientError(reqwest::Error),
 }
