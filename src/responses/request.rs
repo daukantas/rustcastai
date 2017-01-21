@@ -1,15 +1,11 @@
 use std::collections::HashMap;
 use serde_json::{Map, Value};
 
-use super::intent::Intent;
-use super::constants;
+use ::constants;
+use ::resources::Intent;
 
-/*
- * As serde does not support deserialization for &str
- * we use String instead
- */
 #[derive(Debug, Deserialize)]
-pub struct Response {
+pub struct Request {
     pub uuid: String,
     pub act: String,
     pub source: String,
@@ -24,7 +20,7 @@ pub struct Response {
     pub entities: HashMap<String, Vec<Map<String, Value>>>,
 }
 
-impl Response {
+impl Request {
 
     pub fn intent(&self) -> Option<&Intent> {
         self.intents.first()

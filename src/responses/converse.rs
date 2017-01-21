@@ -5,13 +5,12 @@ use curs;
 use curs::{Request, Method};
 use curs::hyper::header::Authorization;
 
-use super::constants;
-use super::intent::Intent;
-use super::action::Action;
-use super::error::RecastError;
+use ::constants;
+use ::error::RecastError;
+use ::resources::{Action, Intent};
 
 #[derive(Debug, Deserialize)]
-pub struct Conversation {
+pub struct Converse {
     pub uuid: String,
     pub source: String,
     pub replies: Vec<String>,
@@ -27,7 +26,7 @@ pub struct Conversation {
     pub version: String,
 }
 
-impl Conversation {
+impl Converse {
 
     pub fn replies(&self) -> Option<&str> {
         self.replies.first().map(|s| s.as_str())

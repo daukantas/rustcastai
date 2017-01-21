@@ -13,19 +13,19 @@ extern crate serde_json;
 #[macro_use] extern crate serde_derive;
 
 mod traits;
+
+/// Representation of the API resources (Action, Intent,...)
+pub mod resources;
+
+pub mod responses;
+
 /// Rustcastai Client to perform requests to the Recast.AI API
 pub mod client;
 pub use client::Client;
-/// Representation of a Recast.AI action
-pub mod action;
-/// Result of a request to analyze datas
-pub mod response;
-/// Representation of a Recast.AI intent
-pub mod intent;
+
 /// Rustcastai's error types
 pub mod error;
-/// Result of a request to converse with a bot
-pub mod conversation;
+
 /// Bunch of constants used in the SDK
 pub mod constants {
     pub const REQUEST_ENDPOINT: &'static str = "https://api.recast.ai/v2/request";

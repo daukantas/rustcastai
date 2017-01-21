@@ -1,28 +1,22 @@
 use std::env;
-use std::io::Read;
 
-use serde::de::Deserialize;
-
-use curs;
 use curs::hyper::header::Authorization;
-use curs::{Request, FileUpload, Method, StatusCode};
+use curs::{Request, FileUpload, Method};
 
-use super::constants;
-use super::response::Response;
-use super::error::RecastError;
-use super::conversation::Conversation;
-use super::traits::ParseResponse;
+use ::{constants, responses};
+use ::error::RecastError;
+use ::traits::ParseResponse;
 
 #[derive(Debug)]
 pub struct Client<'a> {
-    pub token: &'a str,
+    token: &'a str,
     language: Option<&'a str>,
 }
 
 impl<'a> ParseResponse for Client<'a> {}
 
 impl<'a> Client<'a> {
-    /// Create a new client with a Recast.AI toke
+    /// Create a new client with a Recast.AI token
     pub fn new(token: &'a str) -> Self {
         Client { token: token, language: None }
     }
@@ -33,7 +27,7 @@ impl<'a> Client<'a> {
     }
 
     /// Call Recast.AI's API to analyze a text
-    pub fn text_request(&self, text: &str) -> Result<Response, RecastError> {
+    pub fn text_request(&self, text: &str) -> Result<responses::Request, RecastError> {
         let mut req = Request::new(Method::Post, constants::REQUEST_ENDPOINT);
         let mut params = vec![("text", text)];
         if let Some(ref language) = self.language {
@@ -44,11 +38,11 @@ impl<'a> Client<'a> {
         req.params(params);
         req.send()
             .map_err(|e| RecastError::Request(e))
-            .and_then(|x| Self::parse_response::<Response>(x))
+            .and_then(|x| Self::parse_response::<responses::Request>(x))
     }
 
     /// Call Recast.AI's API to analyze an audio file
-    pub fn file_request(&self, file_name: &str) -> Result<Response, RecastError> {
+    pub fn file_request(&self, file_name: &str) -> Result<responses::Request, RecastError> {
         let file = FileUpload {
             path: &env::current_dir().unwrap().join(file_name),
             name: "voice".to_string(),
@@ -60,11 +54,11 @@ impl<'a> Client<'a> {
         req.files(vec![file]);
         req.send()
             .map_err(|e| RecastError::Request(e))
-            .and_then(|x| Self::parse_response::<Response>(x))
+            .and_then(|x| Self::parse_response::<responses::Request>(x))
     }
 
     /// Call Recast.AI's API to interact with a bot
-    pub fn text_converse(&self, text: &str, conversation_token: Option<&str>) -> Result<Conversation, RecastError> {
+    pub fn text_converse(&self, text: &str, conversation_token: Option<&str>) -> Result<responses::Converse, RecastError> {
         let mut req = Request::new(Method::Post, constants::CONVERSE_ENDPOINT);
         let mut params = vec![("text", text)];
         if let Some(token) = conversation_token {
@@ -78,6 +72,6 @@ impl<'a> Client<'a> {
         req.params(params);
         req.send()
             .map_err(|e| RecastError::Request(e))
-            .and_then(|x| Self::parse_response::<Conversation>(x))
+            .and_then(|x| Self::parse_response::<responses::Converse>(x))
     }
 }
