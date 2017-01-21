@@ -18,6 +18,14 @@ impl<'a> ParseResponse for Client<'a> {}
 
 impl<'a> Client<'a> {
     /// Create a new client
+    /// 
+    /// The token argument is your bot's request access token.
+    /// You can find this token in your bot's settings on Recast.AI
+    ///
+    /// # Example
+    /// ```
+    /// let client = Client::new("YOUR_REQUEST_ACCESS_TOKEN");
+    /// ```
     pub fn new(token: &'a str) -> Result<Self, RecastError> {
         reqwest::Client::new()
             .map_err(|_| RecastError::Error("Failed to create the HTTP Client".to_string()))
@@ -25,6 +33,15 @@ impl<'a> Client<'a> {
     }
 
     /// Set the language used to perform text_request, file_request and text_converse
+    ///
+    /// The language as to be in the form of an isocode, like "en" for english
+    /// For now, Recast.AI supports english and french
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// client.set_language("en");
+    /// ```
     pub fn set_language(&mut self, language: &'a str) {
         self.language = Some(language);
     }
@@ -34,6 +51,14 @@ impl<'a> Client<'a> {
      */
 
     /// Call /request endpoint to analyze a text
+    ///
+    /// This method will make an HTTP request on the /request endpoint of the Recast.AI API
+    /// and will give you back the intent and metadata detected in your input.
+    ///
+    /// # Example
+    /// ```
+    /// client.text_request("Hello, world.");
+    /// ```
     pub fn text_request(&self, text: &str) -> Result<responses::Request, RecastError> {
         let mut params = HashMap::new();
         params.insert("text", text);
@@ -50,6 +75,14 @@ impl<'a> Client<'a> {
     }
 
     /// Call /request endpoint to analyze an audio file
+    ///
+    /// This method will make an HTTP request on the /request endpoint of the Recast.AI API
+    /// and will give you back the intent and metadata detected in the content of your audio file.
+    ///
+    /// # Example
+    /// ```
+    /// client.file_request("test.wav");
+    /// ```
     pub fn file_request(&self, file_name: &str) -> Result<responses::Request, RecastError> {
         let file = ::std::fs::File::open(file_name)
             .map_err(|_| RecastError::FileError)?;
@@ -67,6 +100,14 @@ impl<'a> Client<'a> {
      */
 
     /// Call the /converse endpoint to interact with a bot
+    ///
+    /// This method will make an HTTP request on the /converse endpoint of the Recast.AI API 
+    /// and will give you back the action and metadata detected, along with the replies of your bot
+    ///
+    /// # Example
+    /// ```
+    /// client.text_converse("Hello, what can you do?");
+    /// ```
     pub fn text_converse(&self, text: &str, conversation_token: Option<&str>) -> Result<responses::Converse, RecastError> {
         let mut params = HashMap::new();
         params.insert("text", text);
@@ -81,7 +122,13 @@ impl<'a> Client<'a> {
             .and_then(|b| Self::parse_response::<responses::Converse>(b))
     }
 
-    /// Reset the memory of a conversation
+    /// Reset the memory of your bot for a specific conversation.
+    ///
+    /// # Example
+    /// ```
+    /// client.text_converse("I want to change my destination")
+    ///     .and_then(|res| client.reset_memory(&res.conversation_token));
+    /// ```
     pub fn reset_memory(&self, conversation_token: &str) -> Result<reqwest::Response, RecastError> {
         let mut params = HashMap::new();
         params.insert("conversation_token", conversation_token);
@@ -93,7 +140,13 @@ impl<'a> Client<'a> {
             .map_err(|e| RecastError::HTTPClientError(e))
     }
 
-    /// Reset an entire conversation (memory and flow)
+    /// Reset the entire conversation: both memory and flow.
+    ///
+    /// # Example
+    /// ```
+    /// client.text_converse("Can we start all over again?")
+    ///     .and_then(|res| client.reset_conversation(&res.conversation_token));
+    /// ```
     pub fn reset_conversation(&self, conversation_token: &str) -> Result<reqwest::Response, RecastError> {
         let mut params = HashMap::new();
         params.insert("conversation_token", conversation_token);
