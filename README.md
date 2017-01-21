@@ -14,25 +14,10 @@ If you're using Cargo, just add Rustcastai to your Cargo.toml:
 
 ```
 [dependencies.rustcastai]
-version = "0.1.0"
+version = "0.2.0"
 ```
 
 ## Documentatieon
 
 -- Coming soon --
 
-## Features
-
-What you can with a `REQUEST_ACCESS_TOKEN`
-- [x] /request
-  - [x] with text param
-  - [x] with file param
-- [x] /converse
-  - [x] with text param
-
-What you can do with a `DEVELOPER_ACCESS_TOKEN`
-- [ ] /bots
-- [ ] /intents
-- [ ] /expressions
-- [ ] /entities
-- [ ] /logs

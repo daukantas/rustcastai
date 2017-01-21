@@ -1,6 +1,6 @@
 [package]
 name = "rustcastai"
-version = "0.1.0"
+version = "0.2.0"
 description = "Wrapper around the Recast.AI API"
 readme = "README.md"
 license = "MIT"
