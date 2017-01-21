@@ -1,5 +1,3 @@
-use std::io::Read;
-
 use reqwest;
 use serde_json;
 use serde::de::Deserialize;
@@ -13,7 +11,7 @@ pub struct Body<T> {
 }
 
 pub trait ParseResponse {
-    fn parse_response<T: Deserialize>(mut res: reqwest::Response) -> Result<T, RecastError> {
+    fn parse_response<T: Deserialize>(res: reqwest::Response) -> Result<T, RecastError> {
         if *res.status() != reqwest::StatusCode::Ok {
             return Err(RecastError::RequestError(res))
         }
