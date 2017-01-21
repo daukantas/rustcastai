@@ -18,9 +18,9 @@ impl<'a> ParseResponse for Client<'a> {}
 
 impl<'a> Client<'a> {
     /// Create a new client
-    pub fn new(token: &'a str) -> Result<Self, &str> {
+    pub fn new(token: &'a str) -> Result<Self, RecastError> {
         reqwest::Client::new()
-            .map_err(|_| "Failed to create the HTTP Client")
+            .map_err(|_| RecastError::Error("Failed to create the HTTP Client".to_string()))
             .and_then(|client| Ok(Client { token: token, language: None, client: client }))
     }
 
@@ -28,6 +28,10 @@ impl<'a> Client<'a> {
     pub fn set_language(&mut self, language: &'a str) {
         self.language = Some(language);
     }
+
+    /*
+     * Request endpoint
+     */
 
     /// Call /request endpoint to analyze a text
     pub fn text_request(&self, text: &str) -> Result<responses::Request, RecastError> {
@@ -58,6 +62,10 @@ impl<'a> Client<'a> {
             .and_then(|b| Self::parse_response::<responses::Request>(b))
     }
 
+    /*
+     * Converse Endpoint
+     */
+
     /// Call the /converse endpoint to interact with a bot
     pub fn text_converse(&self, text: &str, conversation_token: Option<&str>) -> Result<responses::Converse, RecastError> {
         let mut params = HashMap::new();
@@ -71,5 +79,29 @@ impl<'a> Client<'a> {
             .send()
             .map_err(|e| RecastError::HTTPClientError(e))
             .and_then(|b| Self::parse_response::<responses::Converse>(b))
+    }
+
+    /// Reset the memory of a conversation
+    pub fn reset_memory(&self, conversation_token: &str) -> Result<reqwest::Response, RecastError> {
+        let mut params = HashMap::new();
+        params.insert("conversation_token", conversation_token);
+
+        self.client.request(reqwest::Method::Put, constants::CONVERSE_ENDPOINT)
+            .header(Authorization(format!("Token {}", self.token)))
+            .form(&params)
+            .send()
+            .map_err(|e| RecastError::HTTPClientError(e))
+    }
+
+    /// Reset an entire conversation (memory and flow)
+    pub fn reset_conversation(&self, conversation_token: &str) -> Result<reqwest::Response, RecastError> {
+        let mut params = HashMap::new();
+        params.insert("conversation_token", conversation_token);
+
+        self.client.request(reqwest::Method::Delete, constants::CONVERSE_ENDPOINT)
+            .header(Authorization(format!("Token {}", self.token)))
+            .form(&params)
+            .send()
+            .map_err(|e| RecastError::HTTPClientError(e))
     }
 }

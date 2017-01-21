@@ -1,12 +1,7 @@
-use serde_json::{Map, Value};
 use std::collections::HashMap;
 
-use curs;
-use curs::{Request, Method};
-use curs::hyper::header::Authorization;
+use serde_json::{Map, Value};
 
-use ::constants;
-use ::error::RecastError;
 use ::resources::{Action, Intent};
 
 #[derive(Debug, Deserialize)]
@@ -42,25 +37,5 @@ impl Converse {
 
     pub fn get_memory(&self, key: &str) -> Option<&Map<String, Value>> {
         self.memory.get(key)
-    }
-
-    /*
-     * Static method
-     */
-
-    pub fn reset_memory(token: &str, conversation_token: &str) -> Result<curs::Response, RecastError> {
-        let mut req = Request::new(Method::Put, constants::CONVERSE_ENDPOINT);
-        req.header(Authorization(format!("Token {}", token)));
-        req.params(vec![("conversation_token", conversation_token)]);
-
-        req.send().map_err(|e| RecastError::Request(e))
-    }
-
-    pub fn reset_conversation(token: &str, conversation_token: &str) -> Result<curs::Response, RecastError> {
-        let mut req = Request::new(Method::Delete, constants::CONVERSE_ENDPOINT);
-        req.header(Authorization(format!("Token {}", token)));
-        req.params(vec![("conversation_token", conversation_token)]);
-
-        req.send().map_err(|e| RecastError::Request(e))
     }
 }
