@@ -1,5 +1,3 @@
-mod action;
-mod intent;
+mod word;
 
-pub use self::action::Action;
-pub use self::intent::Intent;
+pub use self::word::Word;
