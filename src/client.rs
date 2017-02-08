@@ -11,7 +11,7 @@ use ::traits::ParseResponse;
 pub struct Client<'a> {
     token: &'a str,
     language: Option<&'a str>,
-    client: reqwest::Client,
+    pub client: reqwest::Client,
 }
 
 impl<'a> ParseResponse for Client<'a> {}

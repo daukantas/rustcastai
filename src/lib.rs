@@ -38,6 +38,8 @@ pub mod responses;
 pub mod client;
 #[doc(inline)] pub use client::Client;
 
+pub mod api_client;
+
 mod error;
 pub use error::RecastError;
 
