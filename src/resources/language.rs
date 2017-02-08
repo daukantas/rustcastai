@@ -1,8 +1,8 @@
 #[derive(Debug, Deserialize)]
 pub struct Language {
     pub id: i32,
-    pub name: String,
-    pub slug: String,
     pub isocode: String,
-    pub is_activated: bool,
+    pub name: Option<String>,
+    pub slug: Option<String>,
+    pub is_activated: Option<bool>,
 }

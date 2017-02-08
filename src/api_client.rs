@@ -28,6 +28,15 @@ impl<'a> ApiClient<'a> {
             }))
     }
 
+    pub fn get_intent(&self, intent_slug: &str) -> Result<Intent, RecastError> {
+        let url = format!("{}/users/{}/bots/{}/intents/{}", constants::RECAST_ENDPOINT, self.user_slug, self.bot_slug, intent_slug);
+        self.r_client.client.get(&url)
+            .header(Authorization(format!("Token {}", self.token)))
+            .send()
+            .map_err(|e| RecastError::HTTPClientError(e))
+            .and_then(|b| Self::parse_response::<Intent>(b))
+    }
+
     pub fn get_intents(&self) -> Result<Vec<Intent>, RecastError> {
         let url = format!("{}/users/{}/bots/{}/intents", constants::RECAST_ENDPOINT, self.user_slug, self.bot_slug);
         self.r_client.client.get(&url)
