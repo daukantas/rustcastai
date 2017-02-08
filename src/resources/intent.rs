@@ -1,5 +1,10 @@
+use super::Expression;
+
 #[derive(Debug, Deserialize)]
 pub struct Intent {
+    pub id: i32,
+    pub name: String,
     pub slug: String,
-    pub confidence: f32,
+    pub description: Option<String>,
+    pub expressions: Option<Vec<Expression>>,
 }
