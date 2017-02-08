@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use serde_json::{Map, Value};
 
 use ::constants;
-use ::resources::Intent;
+use super::intent::Intent;
 
 #[derive(Debug, Deserialize)]
 pub struct Request {

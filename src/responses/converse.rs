@@ -2,7 +2,8 @@ use std::collections::HashMap;
 
 use serde_json::{Map, Value};
 
-use ::resources::{Action, Intent};
+use super::action::Action;
+use super::intent::Intent;
 
 #[derive(Debug, Deserialize)]
 pub struct Converse {
