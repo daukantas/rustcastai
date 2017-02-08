@@ -44,6 +44,7 @@ mod error;
 pub use error::RecastError;
 
 mod constants {
+    pub const RECAST_ENDPOINT: &'static str = "https://api.recast.ai/v2";
     pub const REQUEST_ENDPOINT: &'static str = "https://api.recast.ai/v2/request";
     pub const CONVERSE_ENDPOINT: &'static str = "https://api.recast.ai/v2/converse";
 
